@@ -4,7 +4,7 @@ import './App.css';
 const list = [
   {
     title: 'black elvis',
-    url: 'koolkeith.com',
+    url: 'https://en.wikipedia.org/wiki/Kool_Keith',
     author: 'kool keith',
     num_comments: 7,
     points: 999999,
@@ -12,7 +12,7 @@ const list = [
   },
   {
     title: 'to live and die in l.a.',
-    url: 'latimes.com',
+    url: 'http://www.latimes.com',
     author: 'wang chung',
     num_comments: 213,
     points: 1988,
@@ -24,8 +24,13 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state = {
-      list: list,
+      list
     };
+    this.onDismiss.bind(this);
+  }
+  onDismiss(id){
+    const newList = this.state.list.filter((item) => item.objectID !== id);
+    this.setState({list: newList});
   }
   render() {
     return (
@@ -33,11 +38,12 @@ class App extends Component {
         {this.state.list.map(item => 
             <div key={item.objectID}>
               <span>
-                <a href={item.url}>{item.title}</a>
+                <a href={item.url} target="_blank" rel="noopener noreferrer">{item.title}</a>
               </span>
               <span> {item.author}</span>
               <span> {item.num_comments}</span>
               <span> {item.points}</span>
+              <button onClick={() => this.onDismiss(item.objectID)}>Dismiss</button>              
             </div>
         )}
       </div>
