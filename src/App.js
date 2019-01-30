@@ -29,9 +29,7 @@ class App extends Component {
     this.onDismiss.bind(this);
   }
   onDismiss(id){
-    console.log(this.state.list[0].objectID, id);
     const newList = this.state.list.filter((item) => item.objectID !== id);
-    console.log(newList);
     this.setState({list: newList});
   }
   render() {
