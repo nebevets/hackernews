@@ -1,41 +1,37 @@
 import React, { Component } from 'react';
 import './App.css';
+import list from './AppData';
 
-const list = [
-  {
-    title: 'black elvis',
-    url: 'https://en.wikipedia.org/wiki/Kool_Keith',
-    author: 'kool keith',
-    num_comments: 7,
-    points: 999999,
-    objectID: 123456
-  },
-  {
-    title: 'to live and die in l.a.',
-    url: 'http://www.latimes.com',
-    author: 'wang chung',
-    num_comments: 213,
-    points: 1988,
-    objectID: 654321
-  }
-];
+const isSearched = (searchTerm) => 
+  (item) =>
+    !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase());
 
 class App extends Component {
   constructor(props){
     super(props);
     this.state = {
-      list
+      list: list,
+      searchTerm: ''
     };
-    this.onDismiss.bind(this);
   }
-  onDismiss(id){
+  onDismiss = (id) => {
     const newList = this.state.list.filter((item) => item.objectID !== id);
-    this.setState({list: newList});
+    this.setState({
+      list: newList
+    });
+  }
+  onSearchChange = (event) => {
+    this.setState({
+      searchTerm: event.target.value
+    });
   }
   render() {
     return (
       <div className="App">
-        {this.state.list.map(item => 
+        <form>
+          <input type="text" onChange={this.onSearchChange} />
+        </form>
+        {this.state.list.filter(isSearched(this.state.searchTerm)).map(item => 
             <div key={item.objectID}>
               <span>
                 <a href={item.url} target="_blank" rel="noopener noreferrer">{item.title}</a>
