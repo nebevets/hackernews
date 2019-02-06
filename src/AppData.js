@@ -8,9 +8,9 @@ const list = [
       objectID: 123456
     },
     {
-        title: 'depeche mode',
+        title: 'ice machine',
         url: 'http://www.depechemode.com',
-        author: 'kool keith',
+        author: 'depeche mode',
         num_comments: 1981,
         points: 2019,
         objectID: 473829

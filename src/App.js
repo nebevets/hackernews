@@ -26,12 +26,13 @@ class App extends Component {
     });
   }
   render() {
+    const {list, searchTerm} = this.state
     return (
       <div className="App">
         <form>
-          <input type="text" onChange={this.onSearchChange} />
+          <input type="text" value={searchTerm} onChange={this.onSearchChange} />
         </form>
-        {this.state.list.filter(isSearched(this.state.searchTerm)).map(item => 
+        {list.filter(isSearched(searchTerm)).map(item => 
             <div key={item.objectID}>
               <span>
                 <a href={item.url} target="_blank" rel="noopener noreferrer">{item.title}</a>
