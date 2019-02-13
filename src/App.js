@@ -6,6 +6,20 @@ const isSearched = (searchTerm) =>
   (item) =>
     !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase());
 
+class Button extends Component{
+  render(){
+    const {onClick, className = '', children} = this.props;
+    return (
+      <button
+        onClick={onClick}
+        className={className}
+        type="button">
+        {children}  
+      </button>
+    );
+  }
+}
+
 class Search extends Component{
   render() {
     const {value, onChange, children} = this.props;
@@ -30,7 +44,9 @@ class Table extends Component{
             <span> {item.author}</span>
             <span> {item.num_comments}</span>
             <span> {item.points}</span>
-            <button onClick={() => onDismiss(item.objectID)}>Dismiss</button>              
+            <Button onClick={() => onDismiss(item.objectID)}>
+              Dismiss
+            </Button>              
           </div>
           )
         }
