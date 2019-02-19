@@ -7,11 +7,9 @@ const PATH_BASE = 'https://hn.algolia.com/api/v1';
 const PATH_SEARCH = '/search';
 const PARAM_SEARCH = 'query=';
 
-const url = `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${DEFAULT_QUERY}`;
-
-const isSearched = (searchTerm) => 
+/*const isSearched = (searchTerm) => 
   (item) =>
-    !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase());
+    !searchTerm || item.title.toLowerCase().includes(searchTerm.toLowerCase());*/
 
 const Button = ({onClick, className = '', children}) => 
   <button
@@ -21,15 +19,19 @@ const Button = ({onClick, className = '', children}) =>
     {children}  
   </button>
 
-const Search = ({value, onChange, children}) =>
-  <form>
-    {children} <input type="text" value={value} onChange={onChange} />
+const Search = ({value, onChange, onSubmit, children}) =>
+  <form onSubmit={onSubmit}>
+    {children}
+    <input type="text" value={value} onChange={onChange} />
+    <button type="submit">
+      Submit
+    </button>
   </form>
 
-const Table = ({list, pattern, onDismiss}) =>
+const Table = ({list, onDismiss}) =>
   <div>
-    {list.filter(isSearched(pattern)).map(item => 
-      <div key={item.objectID}>
+    {list.map(item => 
+      <div key={item.objectID} className="tableRow">
         <span>
           <a href={item.url} target="_blank" rel="noopener noreferrer">{item.title}</a>
         </span>
@@ -56,7 +58,7 @@ class App extends Component {
     this.setState({ result });
   }
   fetchSearchTopstories = (searchTerm) => {
-    fetch(url)
+    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}`)
       .then(response => response.json())
       .then(result => this.setSearchTopstories(result));
   }
@@ -76,18 +78,21 @@ class App extends Component {
       searchTerm: event.target.value
     });
   }
+  onSearchSubmit = (event) => {    
+    const { searchTerm } = this.state;
+    this.fetchSearchTopstories(searchTerm);
+    event.preventDefault();
+  }
   render() {
     const { searchTerm, result } = this.state
-    //if (!result) { return null; }
     return (
       <div className="App">
-        <Search value={searchTerm} onChange={this.onSearchChange}>
+        <Search value={searchTerm} onChange={this.onSearchChange} onSubmit={this.onSearchSubmit}>
           <label>search titles</label>
         </Search>
         { result &&
           <Table
             list={result.hits}
-            pattern={searchTerm}
             onDismiss={this.onDismiss} />
         }
       </div>
