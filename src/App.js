@@ -65,9 +65,10 @@ class App extends Component {
     this.fetchSearchTopstories(searchTerm);
   }
   onDismiss = (id) => {
-    const newList = this.state.list.filter((item) => item.objectID !== id);
+    const isNotId = item => item.objectID !== id;
+    const updatedHits = this.state.result.hits.filter(isNotId);
     this.setState({
-      list: newList
+      result: {...this.state.result , hits: updatedHits}
     });
   }
   onSearchChange = (event) => {
