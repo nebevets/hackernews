@@ -16,7 +16,8 @@ body {
 }
 
 button{
-  vertical-align: text-bottom;
+  margin-left: 1ex;
+  vertical-align: middle;
   height: 2em;
   border-radius: 5px;
   border-color: blue;

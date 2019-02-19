@@ -1,5 +1,8 @@
 .App {
-  text-align: center;
+  margin-left: 3em;
   line-height: 3em;
   letter-spacing: 0.25ex;
+}
+.tableRow{
+  border-bottom: 1px dashed lightcyan;
 }
