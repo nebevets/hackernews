@@ -3,9 +3,14 @@ import './App.css';
 //import list from './AppData';
 
 const DEFAULT_QUERY = 'javascript';
+const DEFAULT_PAGE = 0;
+const DEFAULT_HPP = 5;
+
 const PATH_BASE = 'https://hn.algolia.com/api/v1';
 const PATH_SEARCH = '/search';
 const PARAM_SEARCH = 'query=';
+const PARAM_PAGE = 'page=';
+const PARAM_HPP = 'hitsPerPage='
 
 /*const isSearched = (searchTerm) => 
   (item) =>
@@ -18,6 +23,16 @@ const Button = ({onClick, className = '', children}) =>
     type="button">
     {children}  
   </button>
+
+/*const PageControl = ({page, term, fetch}) =>
+  <span>
+    {`page ${page + 1} of 100`}
+    { page
+      ? <Button onClick={() => fetch(term, page - 1)}>Previous</Button>
+      : null
+    }
+    <Button onClick={() => fetch(term, page + 1)}>Next</Button>
+  </span>*/
 
 const Search = ({value, onChange, onSubmit, children}) =>
   <form onSubmit={onSubmit}>
@@ -55,16 +70,29 @@ class App extends Component {
     };
   }
   setSearchTopstories = (result) => {
-    this.setState({ result });
+    const { hits, page } = result;
+    const oldHits = page !== 0
+      ? this.state.result.hits
+      : [];
+    const updatedHits = [
+      ...oldHits,
+      ...hits
+    ];
+    this.setState({ 
+      result: {
+        hits: updatedHits,
+        page
+      }
+    });
   }
-  fetchSearchTopstories = (searchTerm) => {
-    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}`)
+  fetchSearchTopstories = (searchTerm, page) => {
+    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`)
       .then(response => response.json())
       .then(result => this.setSearchTopstories(result));
   }
   componentDidMount() {
     const { searchTerm } = this.state;
-    this.fetchSearchTopstories(searchTerm);
+    this.fetchSearchTopstories(searchTerm, DEFAULT_PAGE);
   }
   onDismiss = (id) => {
     const isNotId = item => item.objectID !== id;
@@ -80,21 +108,31 @@ class App extends Component {
   }
   onSearchSubmit = (event) => {    
     const { searchTerm } = this.state;
-    this.fetchSearchTopstories(searchTerm);
+    this.fetchSearchTopstories(searchTerm, DEFAULT_PAGE);
     event.preventDefault();
   }
   render() {
-    const { searchTerm, result } = this.state
+    const { searchTerm, result } = this.state;
+    const page = (result && result.page) || 0;
     return (
       <div className="App">
-        <Search value={searchTerm} onChange={this.onSearchChange} onSubmit={this.onSearchSubmit}>
-          <label>search titles</label>
-        </Search>
-        { result &&
-          <Table
-            list={result.hits}
-            onDismiss={this.onDismiss} />
-        }
+        <div className="page">
+          <div className="interactions">
+            <Search value={searchTerm} onChange={this.onSearchChange} onSubmit={this.onSearchSubmit}>
+              <label>search titles</label>
+            </Search>
+            <Button onClick={() => this.fetchSearchTopstories(searchTerm, page + 1)}>
+              More
+            </Button>
+          </div>
+          { result &&
+            <div className="interactions">
+              <Table
+              list={result.hits}
+              onDismiss={this.onDismiss} />
+            </div>
+          }
+        </div>
       </div>
     );
   }
