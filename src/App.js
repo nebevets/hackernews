@@ -97,11 +97,19 @@ class App extends Component {
     this.setState({searchKey: searchTerm});
     this.fetchSearchTopstories(searchTerm, DEFAULT_PAGE);
   }
+  needsToSearchTopstories = (searchTerm) => !this.state.results[searchTerm];
   onDismiss = (id) => {
+    const { searchKey, results } = this.state;
+    const { hits, page } = results[searchKey];
+
     const isNotId = item => item.objectID !== id;
-    const updatedHits = this.state.result.hits.filter(isNotId);
+    const updatedHits = hits.filter(isNotId);
+    
     this.setState({
-      result: {...this.state.result , hits: updatedHits}
+      results: {
+        ...results,
+        [searchKey]: {hits: updatedHits, page},
+      }
     });
   }
   onSearchChange = (event) => {
@@ -112,7 +120,9 @@ class App extends Component {
   onSearchSubmit = (event) => {    
     const { searchTerm } = this.state;
     this.setState({searchKey: searchTerm});
-    this.fetchSearchTopstories(searchTerm, DEFAULT_PAGE);
+    if (this.needsToSearchTopstories(searchTerm)){
+      this.fetchSearchTopstories(searchTerm, DEFAULT_PAGE);
+    }
     event.preventDefault();
   }
   render() {
